@@ -65,19 +65,10 @@ def shot_length(shot=None, tree='magnetics', threshold=1.2e5):
     Ip = Ip[mask]
     t = t[mask]
     # Form the Ip - thresh difference array:
-    delta_prod_mask = scipy.concatenate((
-        ((Ip[:-1] - threshold) * (Ip[1:] - threshold)) <= 0.0,
-        Ip[-1:] <= threshold
-    ))
+    delta_prod_mask = ((Ip[:-8] - threshold) * (Ip[1:-7] - threshold)) <= 0.0
     # Form the Ip difference arrays:
-    delta_1_mask = scipy.concatenate((
-        (Ip[1:] - Ip[:-1]) <= 0.0,
-        Ip[-1:] <= threshold
-    ))
-    delta_8_mask = scipy.concatenate((
-        (Ip[8:] - Ip[:-8]) <= 0.0,
-        Ip[-8:] <= threshold
-    ))
+    delta_1_mask = (Ip[1:-7] - Ip[:-8]) <= 0.0
+    delta_8_mask = (Ip[8:] - Ip[:-8]) <= 0.0
     # Find the first point where the conditions are satisfied:
     cond_met, = scipy.nonzero(delta_prod_mask & delta_1_mask & delta_8_mask)
     if len(cond_met) == 0:
